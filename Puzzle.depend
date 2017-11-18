@@ -1,0 +1,27 @@
+# depslib dependency file v1.0
+1510824050 source:c:\users\pc\desktop\puzzle\main.cpp
+	<iostream>
+	"Puzzle.h"
+
+1510825934 c:\users\pc\desktop\puzzle\puzzle.h
+	<stdlib.h>
+	<time.h>
+
+1510932716 source:e:\cppcode\puzzle\main.cpp
+	<iostream>
+	<stdio.h>
+	"Puzzle.h"
+
+1510971750 e:\cppcode\puzzle\puzzle.h
+	<stdlib.h>
+	<time.h>
+
+1510932716 source:h:\cppcode\puzzle\main.cpp
+	<iostream>
+	<stdio.h>
+	"Puzzle.h"
+
+1510971750 h:\cppcode\puzzle\puzzle.h
+	<stdlib.h>
+	<time.h>
+
