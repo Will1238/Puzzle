@@ -94,7 +94,7 @@ void SeekPath::puzzle_initialize(void)                                          
         for(int j=0;j<W;j++)
             puzzle[i][j]=(int)(((double)rand()/RAND_MAX)+0.4);                  //特别的，此处常数本为0.5，用于四舍五入，但考虑到实际
                                                                                 //墙面过多，所以特调节常数为0.4
-    puzzle[0][0]=puzzle[H-1][W-1]=0;
+    puzzle[0][0]=puzzle[0][W-1]=puzzle[H-1][0]=puzzle[H-1][W-1]=0;
     in.change(0,0);
     out.change(W-1,H-1);
 
@@ -169,48 +169,139 @@ void SeekPath::show(void)                                                       
         cout<<endl;
     }
 
-    for(int i=0;i<H ;i++){
+    for(int i=0;i<H+2 ;i++){
     //Output the first line
         if(0==i){
-            for(int j=0;j<W;j++){
-                if(puzzle[i][j]==0) cout<<wall[0];
-                else if(puzzle[i][j]==1 && puzzle[i+1][j]==0 && j<W)  cout<<wall[3];
-                else if(puzzle[i][j]==1 && puzzle[i+1][j]==1 && j<W-1)  cout<<wall[8];
-                else if(puzzle[i][j]==1 && puzzle[i+1][j]==1 && j==W)  cout<<wall[5];
-            }
+            cout<<wall[0];
+            for(int j=0;j<W;j++)
+                if(puzzle[i][j]==0)
+                    cout<<wall[3];
+                else
+                    cout<<wall[8];
+            cout<<wall[5];
         }
     //Output the last line
-        else if(H-1==i){
-            for(int j=0;j<W;j++){
-                if(puzzle[i][j]==0 ) cout<<wall[0];
-                else if(puzzle[i][j]==1 && j==0) cout<<wall[6];
-                else if(puzzle[i][j]==1 && puzzle[i-1][j]==0 && j<W)  cout<<wall[3];
-                else if(puzzle[i][j]==1 && puzzle[i-1][j]==1 && j<W-1)  cout<<wall[9];
-            }
+        else if(H+1==i){
+            cout<<wall[6];
+
+            for(int j=0;j<W;j++)
+                if(puzzle[i-1][j]==1)
+                    cout<<wall[9];
+                else
+                    cout<<wall[3];
+
+            cout<<wall[0];
         }
     //Output the other lines
+    //该部分实际上puzzle[i-1][j]为迷宫的实际第一行，因为多输出了一行迷宫“外壳”
         else{
+            if(puzzle[i-1][0]==1)
+                cout<<wall[10];
+            else
+                cout<<wall[2];
+
             for(int j=0;j<W;j++){
-                if(puzzle[i][j]==0) cout<<wall[0];
-                else if(puzzle[i][j]==1 && j==0){
-                     if(puzzle[i][j+1]==1) cout<<wall[10];
-                     else cout<<wall[2];
+                if(0==i-1){
+                    if(puzzle[i-1][j]==1){  //由于迷宫四角设定为0，故无需考虑数组越界
+                        if(puzzle[i-1][j-1]==1 && puzzle[i-1][j+1]==1 && puzzle[i][j]==1)   cout<<wall[1];
+                        else if(puzzle[i-1][j-1]==1 && puzzle[i-1][j+1]==1 && puzzle[i][j]==0)  cout<<wall[9];
+                        else if(puzzle[i-1][j-1]==1 && puzzle[i-1][j+1]==0 && puzzle[i][j]==1)  cout<<wall[11];
+                        else if(puzzle[i-1][j-1]==0 && puzzle[i-1][j+1]==1 && puzzle[i][j]==1)  cout<<wall[10];
+                        else if(puzzle[i-1][j-1]==1 && puzzle[i-1][j+1]==0 && puzzle[i][j]==0)  cout<<wall[7];
+                        else if(puzzle[i-1][j-1]==0 && puzzle[i-1][j+1]==1 && puzzle[i][j]==0)  cout<<wall[6];
+                        else if(puzzle[i-1][j-1]==0 && puzzle[i-1][j+1]==0)  cout<<wall[2];
+                    }
+                    else
+                        cout<<wall[0];
                 }
-                else if(puzzle[i][j]==1 && j==W-1){
-                     if(puzzle[i][j-1]==1) cout<<wall[11];
-                     else cout<<wall[2];
+                else if(H==i){
+                    if(puzzle[i-1][j]==1){
+                        if(puzzle[i-1][j-1]==1 && puzzle[i-1][j+1]==1 && puzzle[i][j]==1)   cout<<wall[1];
+                        else if(puzzle[i-1][j-1]==1 && puzzle[i-1][j+1]==1 && puzzle[i-2][j]==0)  cout<<wall[8];
+                        else if(puzzle[i-1][j-1]==1 && puzzle[i-1][j+1]==0 && puzzle[i-2][j]==1)  cout<<wall[11];
+                        else if(puzzle[i-1][j-1]==0 && puzzle[i-1][j+1]==1 && puzzle[i-2][j]==1)  cout<<wall[10];
+                        else if(puzzle[i-1][j-1]==1 && puzzle[i-1][j+1]==0 && puzzle[i-2][j]==0)  cout<<wall[5];
+                        else if(puzzle[i-1][j-1]==0 && puzzle[i-1][j+1]==1 && puzzle[i-2][j]==0)  cout<<wall[4];
+                        else if(puzzle[i-1][j-1]==0 && puzzle[i-1][j+1]==0)  cout<<wall[2];
+                    }
+                    else
+                        cout<<wall[0];
                 }
-                else{//puzzle[i][j]==1 && j>0 && j<w-1
-                     if(puzzle[i][j-1]==1 && puzzle[i][j+1]==1) cout<<wall[1];
-                     else if(puzzle[i][j-1]==1 && puzzle[i][j+1]==0) cout<<wall[11];
-                     else if(puzzle[i][j-1]==0 && puzzle[i][j+1]==1)  cout<<wall[10];
-                     else   cout<<wall[2];  //puzzle[i][j-1]==0 && puzzle[i][j+1]=0
+                else{   //rolls>0 && rolls<H-1
+                    if(0==j){       //the true first column
+                        if(puzzle[i-1][j]==1){
+                            if(puzzle[i-2][j]==1 && puzzle[i][j]==1 && puzzle[i-1][j+1]==1) cout<<wall[1];
+                            else if(puzzle[i-2][j]==1 && puzzle[i][j]==1 && puzzle[i-1][j+1]==0) cout<<wall[11];
+                            else if(puzzle[i-2][j]==1 && puzzle[i][j]==0 && puzzle[i-1][j+1]==1) cout<<wall[9];
+                            else if(puzzle[i-2][j]==0 && puzzle[i][j]==1 && puzzle[i-1][j+1]==1) cout<<wall[8];
+                            else if(puzzle[i-2][j]==1 && puzzle[i][j]==0 && puzzle[i-1][j+1]==0) cout<<wall[7];
+                            else if(puzzle[i-2][j]==0 && puzzle[i][j]==1 && puzzle[i-1][j+1]==0) cout<<wall[5];
+                            else if(puzzle[i-2][j]==0 && puzzle[i][j]==0) cout<<wall[3];
+                        }
+                        else{
+                            if(puzzle[i-2][j]==1 && puzzle[i][j]==1 && puzzle[i-1][j+1]==1) cout<<wall[1];
+                            else if(puzzle[i-2][j]==1 && puzzle[i][j]==1 && puzzle[i-1][j+1]==0) cout<<wall[2];
+                            else if(puzzle[i-2][j]==1 && puzzle[i][j]==0 && puzzle[i-1][j+1]==1) cout<<wall[6];
+                            else if(puzzle[i-2][j]==0 && puzzle[i][j]==1 && puzzle[i-1][j+1]==1) cout<<wall[4];
+                            else if(puzzle[i-2][j]==1 && puzzle[i][j]==0 && puzzle[i-1][j+1]==0) cout<<wall[2];
+                            else if(puzzle[i-2][j]==0 && puzzle[i][j]==1 && puzzle[i-1][j+1]==0) cout<<wall[2];
+                            else if(puzzle[i-2][j]==0 && puzzle[i][j]==0) cout<<wall[3];
+                        }
+                    }
+                    else if(W-1==j){    //the true last column
+                        if(puzzle[i-1][j]==1){
+                            if(puzzle[i-2][j]==1 && puzzle[i][j]==1 && puzzle[i-1][j+1]==1) cout<<wall[1];
+                            else if(puzzle[i-2][j]==1 && puzzle[i][j]==1 && puzzle[i-1][j+1]==0) cout<<wall[10];
+                            else if(puzzle[i-2][j]==1 && puzzle[i][j]==0 && puzzle[i-1][j+1]==1) cout<<wall[9];
+                            else if(puzzle[i-2][j]==0 && puzzle[i][j]==1 && puzzle[i-1][j+1]==1) cout<<wall[8];
+                            else if(puzzle[i-2][j]==1 && puzzle[i][j]==0 && puzzle[i-1][j+1]==0) cout<<wall[2];
+                            else if(puzzle[i-2][j]==0 && puzzle[i][j]==1 && puzzle[i-1][j+1]==0) cout<<wall[4];
+                            else if(puzzle[i-2][j]==0 && puzzle[i][j]==0) cout<<wall[3];
+                        }
+                        else{
+                            if(puzzle[i-2][j]==1 && puzzle[i][j]==1 && puzzle[i-1][j+1]==1) cout<<wall[1];
+                            else if(puzzle[i-2][j]==1 && puzzle[i][j]==1 && puzzle[i-1][j-1]==0) cout<<wall[2];
+                            else if(puzzle[i-2][j]==1 && puzzle[i][j]==0 && puzzle[i-1][j-1]==1) cout<<wall[7];
+                            else if(puzzle[i-2][j]==0 && puzzle[i][j]==1 && puzzle[i-1][j-1]==1) cout<<wall[5];
+                            else if(puzzle[i-2][j]==1 && puzzle[i][j]==0 && puzzle[i-1][j-1]==0) cout<<wall[2];
+                            else if(puzzle[i-2][j]==0 && puzzle[i][j]==1 && puzzle[i-1][j-1]==0) cout<<wall[2];
+                            else if(puzzle[i-2][j]==0 && puzzle[i][j]==0) cout<<wall[3];
+                        }
+                    }
+                    else{   //columns>0 && columns<W-1
+                        if(puzzle[i-1][j]==1){
+                            if(puzzle[i][j]==1){
+                                if(puzzle[i][j]==1 && puzzle[i-1][j-1]==1 && puzzle[i-1][j+1]==1) cout<<wall[1];
+                                else if(puzzle[i][j]==0 && puzzle[i-1][j-1]==1 && puzzle[i-1][j+1]==1) cout<<wall[9];
+                                else if(puzzle[i][j]==1 && puzzle[i-1][j-1]==0 && puzzle[i-1][j+1]==1) cout<<wall[10];
+                                else if(puzzle[i][j]==1 && puzzle[i-1][j-1]==1 && puzzle[i-1][j+1]==0) cout<<wall[11];
+                                else if(puzzle[i][j]==0 && puzzle[i-1][j-1]==0 && puzzle[i-1][j+1]==1) cout<<wall[6];
+                                else if(puzzle[i][j]==0 && puzzle[i-1][j-1]==1 && puzzle[i-1][j+1]==0) cout<<wall[7];
+                                else if(puzzle[i-1][j-1]==0 && puzzle[i-1][j+1]==0) cout<<wall[2];
+                            }
+                            else{
+                                if(puzzle[i][j]==1 && puzzle[i-1][j-1]==1 && puzzle[i-1][j+1]==1) cout<<wall[8];
+                                else if(puzzle[i][j]==0 && puzzle[i-1][j-1]==1 && puzzle[i-1][j+1]==1) cout<<wall[3];
+                                else if(puzzle[i][j]==1 && puzzle[i-1][j-1]==0 && puzzle[i-1][j+1]==1) cout<<wall[4];
+                                else if(puzzle[i][j]==1 && puzzle[i-1][j-1]==1 && puzzle[i-1][j+1]==0) cout<<wall[5];
+                                else if(puzzle[i][j]==0) cout<<wall[3];
+                            }
+                        }
+                        else
+                            cout<<wall[0];
+                    }
+
                 }
             }
+
+            if(puzzle[i-1][W-1]==1)
+                cout<<wall[11];
+            else
+                cout<<wall[2];
         }
         cout<<endl;
     }cout<<endl;
-    cout<<"Press \"Enter\" to continue or Input 'N' to end:";
+    cout<<"Press \"Enter\" to continue or Input 'S' or 's' to end:";
 }
 
 void SeekPath::tail(void)                                                       //将出口入栈
