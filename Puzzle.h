@@ -92,7 +92,7 @@ void SeekPath::puzzle_initialize(void)                                          
 
     for(int i=0;i<H;i++)
         for(int j=0;j<W;j++)
-            puzzle[i][j]=(int)(((double)rand()/RAND_MAX)+0.4);                  //特别的，此处常数本为0.5，用于四舍五入，但考虑到实际
+            puzzle[i][j]=(int)(((double)rand()/RAND_MAX)+0.3);                  //特别的，此处常数本为0.5，用于四舍五入，但考虑到实际
                                                                                 //墙面过多，所以特调节常数为0.4
     puzzle[0][0]=puzzle[0][W-1]=puzzle[H-1][0]=puzzle[H-1][W-1]=0;
     in.change(0,0);
@@ -271,20 +271,20 @@ void SeekPath::show(void)                                                       
                     else{   //columns>0 && columns<W-1
                         if(puzzle[i-1][j]==1){
                             if(puzzle[i][j]==1){
-                                if(puzzle[i][j]==1 && puzzle[i-1][j-1]==1 && puzzle[i-1][j+1]==1) cout<<wall[1];
-                                else if(puzzle[i][j]==0 && puzzle[i-1][j-1]==1 && puzzle[i-1][j+1]==1) cout<<wall[9];
-                                else if(puzzle[i][j]==1 && puzzle[i-1][j-1]==0 && puzzle[i-1][j+1]==1) cout<<wall[10];
-                                else if(puzzle[i][j]==1 && puzzle[i-1][j-1]==1 && puzzle[i-1][j+1]==0) cout<<wall[11];
-                                else if(puzzle[i][j]==0 && puzzle[i-1][j-1]==0 && puzzle[i-1][j+1]==1) cout<<wall[6];
-                                else if(puzzle[i][j]==0 && puzzle[i-1][j-1]==1 && puzzle[i-1][j+1]==0) cout<<wall[7];
+                                if(puzzle[i+1][j]==1 && puzzle[i-1][j-1]==1 && puzzle[i-1][j+1]==1) cout<<wall[1];
+                                else if(puzzle[i+1][j]==0 && puzzle[i-1][j-1]==1 && puzzle[i-1][j+1]==1) cout<<wall[9];
+                                else if(puzzle[i+1][j]==1 && puzzle[i-1][j-1]==0 && puzzle[i-1][j+1]==1) cout<<wall[10];
+                                else if(puzzle[i+1][j]==1 && puzzle[i-1][j-1]==1 && puzzle[i-1][j+1]==0) cout<<wall[11];
+                                else if(puzzle[i+1][j]==0 && puzzle[i-1][j-1]==0 && puzzle[i-1][j+1]==1) cout<<wall[6];
+                                else if(puzzle[i+1][j]==0 && puzzle[i-1][j-1]==1 && puzzle[i-1][j+1]==0) cout<<wall[7];
                                 else if(puzzle[i-1][j-1]==0 && puzzle[i-1][j+1]==0) cout<<wall[2];
                             }
                             else{
-                                if(puzzle[i][j]==1 && puzzle[i-1][j-1]==1 && puzzle[i-1][j+1]==1) cout<<wall[8];
-                                else if(puzzle[i][j]==0 && puzzle[i-1][j-1]==1 && puzzle[i-1][j+1]==1) cout<<wall[3];
-                                else if(puzzle[i][j]==1 && puzzle[i-1][j-1]==0 && puzzle[i-1][j+1]==1) cout<<wall[4];
-                                else if(puzzle[i][j]==1 && puzzle[i-1][j-1]==1 && puzzle[i-1][j+1]==0) cout<<wall[5];
-                                else if(puzzle[i][j]==0) cout<<wall[3];
+                                if(puzzle[i+1][j]==1 && puzzle[i-1][j-1]==1 && puzzle[i-1][j+1]==1) cout<<wall[8];
+                                else if(puzzle[i+1][j]==0 && puzzle[i-1][j-1]==1 && puzzle[i-1][j+1]==1) cout<<wall[3];
+                                else if(puzzle[i+1][j]==1 && puzzle[i-1][j-1]==0 && puzzle[i-1][j+1]==1) cout<<wall[4];
+                                else if(puzzle[i+1][j]==1 && puzzle[i-1][j-1]==1 && puzzle[i-1][j+1]==0) cout<<wall[5];
+                                else if(puzzle[i+1][j]==0) cout<<wall[3];
                             }
                         }
                         else
@@ -301,6 +301,7 @@ void SeekPath::show(void)                                                       
         }
         cout<<endl;
     }cout<<endl;
+
     cout<<"Press \"Enter\" to continue or Input 'S' or 's' to end:";
 }
 
